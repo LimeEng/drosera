@@ -1,57 +1,39 @@
-use rand::distributions::Alphanumeric;
-use rand::{thread_rng, Rng};
-use std::error::Error;
-use std::io;
-use std::net::{Ipv4Addr, SocketAddrV4};
-use std::time::{Duration, Instant};
-use tokio::io::AsyncWriteExt;
-use tokio::net::{TcpListener, TcpStream};
-use tokio::time::sleep;
+use clap::Clap;
+use drosera::tarpit;
+use std::net::SocketAddr;
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
-    let socket = SocketAddrV4::new(Ipv4Addr::LOCALHOST, 22);
-    let listener = TcpListener::bind(&socket).await?;
+/// Tarpit SSH server.
+#[derive(Clap, Debug)]
+#[clap(version = env!("CARGO_PKG_VERSION"))]
+struct Opts {
+    /// The socket address to bind to
+    #[clap(short, long, default_value = "127.0.0.1:22")]
+    socket_addr: SocketAddr,
+    /// The maximum number of connections maintained at once
+    #[clap(short, long, default_value = "1024")]
+    max_connections: u32,
+    /// Approximately wait this long before sending more data (in milliseconds)
+    #[clap(short, long, default_value = "10000")]
+    delay: u32,
+}
 
-    loop {
-        let (socket, _) = listener.accept().await?;
+fn main() {
+    let opts = Opts::parse();
+    println!("{:#?}", opts);
+    start_server(opts);
+}
 
-        tokio::spawn(async move {
-            let _ = process(socket).await;
+fn start_server(opts: Opts) {
+    tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .build()
+        .unwrap()
+        .block_on(async {
+            let options = tarpit::TarpitServerOptions {
+                socket_addr: opts.socket_addr,
+                max_connections: opts.max_connections,
+                delay: opts.delay,
+            };
+            let _ = tarpit::start_server(options).await;
         });
-    }
-}
-
-async fn process(socket: TcpStream) -> io::Result<()> {
-    let peer = socket.peer_addr()?;
-    println!("{:?} connected", peer);
-    let connected = Instant::now();
-    let sent_bytes = keep_busy(socket).await;
-    let elapsed = connected.elapsed();
-    println!(
-        "{:?} disconnected, was connected for {}ms, received {} bytes",
-        peer,
-        elapsed.as_millis(),
-        sent_bytes
-    );
-    Ok(())
-}
-
-async fn keep_busy(mut socket: TcpStream) -> u64 {
-    let mut sent_bytes: u64 = 0;
-    loop {
-        let data = format!("{}\r\n", rand_string_clrf());
-
-        if socket.write_all(data.as_bytes()).await.is_ok() {
-            sent_bytes += data.len() as u64;
-        } else {
-            return sent_bytes;
-        }
-
-        sleep(Duration::from_millis(10000)).await;
-    }
-}
-
-fn rand_string_clrf() -> String {
-    thread_rng().sample_iter(&Alphanumeric).take(30).collect()
 }

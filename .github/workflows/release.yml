@@ -2,6 +2,19 @@ name: Publish
 
 on:
   workflow_dispatch:
+    inputs:
+      create-tag:
+        description: 'If a new tag should be created and pushed'
+        required: true
+        default: 'true'
+      publish-crate:
+        description: 'If a new version should be published to crates.io'
+        required: true
+        default: 'true'
+      upload-assets:
+        description: 'If new assets should be generated and uploaded'
+        required: true
+        default: 'true'
 
 jobs:
   push-tag:
@@ -18,13 +31,25 @@ jobs:
           VERSION=$(awk -F ' = ' '$1 ~ /version/ { gsub(/[\"]/, "", $2); printf("%s",$2) }' Cargo.toml)
           VERSION="v${VERSION}"
           echo "Detected version: ${VERSION}"
-          git config --global user.name 'Emil Englesson'
-          git config --global user.email 'englesson.emil@gmail.com'
-          git tag -a ${VERSION} -m ''
-          git push origin refs/tags/${VERSION}
+          if [[ "${{ github.event.inputs.create-tag }}" == "true" ]]
+          then
+            echo "Creating new tag"
+            git config --global user.name 'Emil Englesson'
+            git config --global user.email 'englesson.emil@gmail.com'
+            git tag -a ${VERSION} -m ''
+            git push origin refs/tags/${VERSION}
+          elif [[ "${{ github.event.inputs.create-tag }}" == "false" ]]
+          then
+            echo "Skipping creation of new tag"
+          else
+            echo "Invalid value: create-tag: ${{ github.event.inputs.create-tag }}"
+            echo "Aborting"
+            exit 1
+          fi
           echo "::set-output name=version_tag::${VERSION}"
 
   publish:
+    if: github.event.inputs.publish-crate == true
     needs: push-tag
     runs-on: ubuntu-latest
     steps:
@@ -38,9 +63,10 @@ jobs:
       - name: Publish to crates.io
         run: cargo publish --token $SECRET_TOKEN
         env:
-          SECRET_TOKEN: ${{ secrets.CARGO_DROSERA_TOKEN }}
+          SECRET_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
 
   upload-assets:
+    if: github.event.inputs.upload-assets == true
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -77,3 +103,4 @@ jobs:
         file: target/release/${{ matrix.artifact_name }}
         asset_name: ${{ matrix.asset_name }}
         tag: ${{needs.push-tag.outputs.version_tag}}
+        release_name: ${{needs.push-tag.outputs.version_tag}}

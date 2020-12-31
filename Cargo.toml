@@ -1,6 +1,6 @@
 [package]
 name = "drosera"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Emil Englesson <englesson.emil@gmail.com>"]
 edition = "2018"
 description = "Small and fairly efficient SSH tarpit server"

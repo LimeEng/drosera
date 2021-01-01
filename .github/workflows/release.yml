@@ -6,15 +6,15 @@ on:
       create-tag:
         description: 'If a new tag should be created and pushed'
         required: true
-        default: 'true'
+        default: true
       publish-crate:
         description: 'If a new version should be published to crates.io'
         required: true
-        default: 'true'
+        default: true
       upload-assets:
         description: 'If new assets should be generated and uploaded'
         required: true
-        default: 'true'
+        default: true
 
 jobs:
   push-tag:
@@ -28,6 +28,9 @@ jobs:
         # https://github.com/rust-cli/meta/issues/33
         # Thanks ashutoshrishi!
         run: |
+          echo "Create tag: ${{ github.event.inputs.create-tag }}"
+          echo "Publish crate: ${{ github.event.inputs.publish-crate }}"
+          echo "Upload assets: ${{ github.event.inputs.upload-assets }}"
           VERSION=$(awk -F ' = ' '$1 ~ /version/ { gsub(/[\"]/, "", $2); printf("%s",$2) }' Cargo.toml)
           VERSION="v${VERSION}"
           echo "Detected version: ${VERSION}"
@@ -49,7 +52,7 @@ jobs:
           echo "::set-output name=version_tag::${VERSION}"
 
   publish:
-    if: github.event.inputs.publish-crate == true
+    if: ${{ github.event.inputs.publish-crate == 'true' }}
     needs: push-tag
     runs-on: ubuntu-latest
     steps:
@@ -66,7 +69,7 @@ jobs:
           SECRET_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
 
   upload-assets:
-    if: github.event.inputs.upload-assets == true
+    if: ${{ github.event.inputs.upload-assets == 'true' }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]

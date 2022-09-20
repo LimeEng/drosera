@@ -1,15 +1,21 @@
-use rand::distributions::Alphanumeric;
-use rand::{thread_rng, Rng};
-use std::error::Error;
-use std::io;
-use std::net::SocketAddr;
-use std::sync::atomic::{AtomicU32, Ordering};
-use std::sync::Arc;
-use std::time::{Duration, Instant};
-use tokio::io::AsyncWriteExt;
-use tokio::net::{TcpListener, TcpStream};
-use tokio::time::sleep;
+use rand::{distributions::Alphanumeric, thread_rng, Rng};
+use std::{
+    error::Error,
+    io,
+    net::SocketAddr,
+    sync::{
+        atomic::{AtomicU32, Ordering},
+        Arc,
+    },
+    time::{Duration, Instant},
+};
+use tokio::{
+    io::AsyncWriteExt,
+    net::{TcpListener, TcpStream},
+    time::sleep,
+};
 
+#[derive(Clone, Debug)]
 pub struct TarpitServerOptions {
     pub socket_addr: SocketAddr,
     pub max_connections: u32,
@@ -59,23 +65,23 @@ async fn process(socket: TcpStream, delay: u32) -> io::Result<()> {
 async fn keep_busy(mut socket: TcpStream, delay: u32) -> u64 {
     let mut sent_bytes: u64 = 0;
     loop {
-        let data = format!("{}\r\n", rand_string_clrf());
+        let data = format!("{}\r\n", rand_string(30));
 
         if socket.write_all(data.as_bytes()).await.is_ok() {
             sent_bytes += data.len() as u64;
         } else {
             return sent_bytes;
         }
-        let range = (delay as f64 * 0.7) as u64..(delay as f64 * 1.3) as u64;
+        let range = (f64::from(delay) * 0.7) as u64..(f64::from(delay) * 1.3) as u64;
         let time = thread_rng().gen_range(range);
         sleep(Duration::from_millis(time)).await;
     }
 }
 
-fn rand_string_clrf() -> String {
+fn rand_string(length: usize) -> String {
     thread_rng()
         .sample_iter(&Alphanumeric)
         .map(char::from)
-        .take(30)
+        .take(length)
         .collect()
 }

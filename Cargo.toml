@@ -2,7 +2,7 @@
 name = "drosera"
 version = "0.3.1"
 authors = ["Emil Englesson <englesson.emil@gmail.com>"]
-edition = "2018"
+edition = "2021"
 description = "Small and fairly efficient SSH tarpit server"
 repository = "https://github.com/LimeEng/drosera/"
 license = "MIT"
@@ -15,7 +15,7 @@ exclude = [
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-futures = "0.3.8"
-tokio = { version = "1.0.1", features = ["full"] }
-rand = "0.8.0"
-clap = "3.0.0-beta.2"
+futures = "0.3"
+tokio = { version = "1", features = ["full"] }
+rand = "0.8"
+clap = { version = "3.2", features = ["cargo"] }

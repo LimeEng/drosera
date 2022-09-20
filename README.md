@@ -43,7 +43,7 @@ If you do not have cargo installed it is also possible to download a pre-built b
 
 Simply run ./drosera --help to obtain the following output:
 ```
-drosera 0.3.1
+drosera 0.3.2
 Tarpit SSH server
 
 USAGE:

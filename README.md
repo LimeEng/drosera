@@ -31,7 +31,7 @@ If you want to download and use drosera you have a couple of alternatives. If yo
 cargo install drosera
 ```
 
-You can also download and install the bleeding edge, latest commit on master, by running the following command:
+You can also download and install from the latest commit on master, by running the following command:
 
 ```
 cargo install --git https://github.com/LimeEng/drosera
@@ -43,26 +43,21 @@ If you do not have cargo installed it is also possible to download a pre-built b
 
 Simply run ./drosera --help to obtain the following output:
 ```
-drosera 0.3.1
+drosera 0.3.2
 Tarpit SSH server
 
 USAGE:
     drosera.exe [OPTIONS]
 
-FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
-
 OPTIONS:
-    -d, --delay <delay>
-            Approximately wait this long before sending more data (in milliseconds) [default: 10000]
-
-    -m, --max-connections <max-connections>
-            The maximum number of connections maintained at once [default: 1024]
-
-    -s, --socket-addr <socket-addr>            The socket address to bind to [default: 127.0.0.1:22]
+    -d <delay>                  Approximately wait this long before sending more data (in
+                                milliseconds) [default: 10000]
+    -h, --help                  Print help information
+    -m <max_connections>        The maximum number of connections maintained at once [default: 1024]
+    -s <socket_addr>            The socket address to bind to [default: 127.0.0.1:22]
+    -V, --version               Print version information
 ```
 
 ## Risks
 
-I do not recommend running drosera on anything valuable. Running tarpits servers at all might [not be a good idea](https://serverfault.com/questions/611063/does-tarpit-have-any-known-vulnerabilities-or-downsides) so make sure you know what you are doing. An adversary might even be able to exploit a vulnerability in drosera to gain access to the machine it's running on. Adversaries could also launch massive denial-of-service attacks, quickly consuming what little memory is available and crashing the server.
+Running tarpits servers at all might [not be a good idea](https://serverfault.com/questions/611063/does-tarpit-have-any-known-vulnerabilities-or-downsides). An adversary might even be able to exploit a vulnerability in drosera to gain access to the machine it's running on. Adversaries could also launch massive denial-of-service attacks, quickly consuming what little memory is available and crashing the server.

@@ -1,4 +1,4 @@
-use rand::{Rng, distributions::Alphanumeric, thread_rng};
+use rand::{Rng, distr::Alphanumeric};
 use std::{
     error::Error,
     io,
@@ -73,13 +73,13 @@ async fn keep_busy(mut socket: TcpStream, delay: u32) -> u64 {
             return sent_bytes;
         }
         let range = (f64::from(delay) * 0.7) as u64..(f64::from(delay) * 1.3) as u64;
-        let time = thread_rng().gen_range(range);
+        let time = rand::rng().random_range(range);
         sleep(Duration::from_millis(time)).await;
     }
 }
 
 fn rand_string(length: usize) -> String {
-    thread_rng()
+    rand::rng()
         .sample_iter(&Alphanumeric)
         .map(char::from)
         .take(length)

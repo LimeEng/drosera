@@ -3,10 +3,11 @@ name = "drosera"
 version = "0.3.2"
 authors = ["Emil Englesson <englesson.emil@gmail.com>"]
 edition = "2024"
-description = "Small and fairly efficient SSH tarpit server"
+description = "SSH tarpit server"
 repository = "https://github.com/LimeEng/drosera/"
 license = "MIT"
 keywords = ["tarpit", "server", "ssh"]
+categories = ["command-line-utilities"]
 
 exclude = [
     ".github/**"

@@ -23,6 +23,7 @@ jobs:
 
   upload-assets:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         include:
@@ -34,21 +35,24 @@ jobs:
     needs: release
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: dtolnay/rust-toolchain@stable
-    - name: Build
-      run: cargo build --release --locked
-    - name: Upload binary
-      run: |
-        cargo install cargo-extract
-        CRATE_NAME=$(cargo extract package.name)
-        CRATE_VERSION=v$(cargo extract package.version)
-        ARCH_TRIPLE=$(cargo extract --arch)
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build
+        run: cargo build --release --locked
+      - name: Upload binary
+        shell: bash
+        run: |
+          cargo install cargo-extract
+          CRATE_NAME=$(cargo extract package.name)
+          CRATE_VERSION=v$(cargo extract package.version)
+          ARCH_TRIPLE=$(cargo extract --arch)
 
-        ARTIFACT_PATH="target/release/${CRATE_NAME}${{ matrix.extension }}"
-        DISPLAY_NAME="${CRATE_NAME}-${ARCH_TRIPLE}"
+          OUTPUT_FILENAME="${CRATE_NAME}-${ARCH_TRIPLE}${{ matrix.extension }}"
+          mv "target/release/${CRATE_NAME}${{ matrix.extension }}" "$OUTPUT_FILENAME"
 
-        echo "${CRATE_NAME}@{CRATE_VERSION} (${ARCH_TRIPLE})"
-        echo "Uploading ${ARTIFACT_PATH}..."
+          echo "${CRATE_NAME}@{CRATE_VERSION} (${ARCH_TRIPLE})"
+          echo "Uploading ${OUTPUT_FILENAME}..."
 
-        gh release upload ${CRATE_VERSION} ${ARTIFACT_PATH}#${DISPLAY_NAME}
+          gh release upload ${CRATE_VERSION} ${OUTPUT_FILENAME}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

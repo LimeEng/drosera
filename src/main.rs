@@ -1,34 +1,33 @@
-use clap::{arg, crate_version, value_parser, Command};
+use clap::{Arg, Command, crate_name, crate_version, value_parser};
 use drosera::tarpit;
 use std::net::SocketAddr;
 
 fn main() {
-    let matches = Command::new("drosera")
+    let matches = Command::new(crate_name!())
         .version(crate_version!())
+        .long_version(crate_version!())
+        .arg_required_else_help(true)
         .about("Tarpit SSH server")
         .arg(
-            arg!([socket_addr])
+            Arg::new("socket_addr")
                 .value_parser(value_parser!(SocketAddr))
                 .default_value("127.0.0.1:22")
-                .takes_value(true)
                 .short('s')
                 .long("socket_addr")
                 .help("The socket address to bind to"),
         )
         .arg(
-            arg!([max_connections])
+            Arg::new("max_connections")
                 .value_parser(value_parser!(u32))
                 .default_value("1024")
-                .takes_value(true)
                 .short('m')
                 .long("max_connections")
                 .help("The maximum number of connections maintained at once"),
         )
         .arg(
-            arg!([delay])
+            Arg::new("delay")
                 .value_parser(value_parser!(u32))
                 .default_value("10000")
-                .takes_value(true)
                 .short('d')
                 .long("delay")
                 .help("Approximately wait this long before sending more data (in milliseconds)"),
@@ -40,7 +39,7 @@ fn main() {
         max_connections: *matches.get_one::<u32>("max_connections").unwrap(),
         delay: *matches.get_one::<u32>("delay").unwrap(),
     };
-    println!("{:#?}", options);
+    println!("{options:#?}");
     start_server(options);
 }
 

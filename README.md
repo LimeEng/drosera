@@ -1,9 +1,9 @@
-![CI status](https://github.com/LimeEng/drosera/workflows/CI/badge.svg)
-[![Latest version](https://img.shields.io/crates/v/drosera.svg)](https://crates.io/crates/drosera)
+[![CI status](https://github.com/LimeEng/drosera/actions/workflows/ci.yaml/badge.svg)](https://github.com/LimeEng/drosera/actions/workflows/ci.yaml)
+[![Latest version](https://img.shields.io/crates/v/drosera?color=blue)](https://crates.io/crates/drosera)
 
 # Drosera
 
-Drosera is a small SSH tarpit server. Inspired by [endlessh](https://nullprogram.com/blog/2019/03/22/).
+Drosera is a SSH tarpit server. Inspired by [endlessh](https://nullprogram.com/blog/2019/03/22/).
 
 When initiating a SSH session, the server first sends a version string to the client before communication begins. However, tarpits like drosera can exploit the following paragraph in the SSH specification, found in [RFC 4253](https://tools.ietf.org/html/rfc4253#page-4):
 ```
@@ -25,37 +25,33 @@ Drosera, like its [beautiful namesake](https://en.wikipedia.org/wiki/Drosera), i
 
 ## Installation
 
-If you want to download and use drosera you have a couple of alternatives. If you have [cargo](https://www.rust-lang.org/tools/install) installed, you can download and install the latest published version by running the following command:
+Install drosera by either grabbing a [pre-built binary](https://github.com/LimeEng/drosera/releases) or by running one of these commands.
 
-```
+```sh
 cargo install drosera
-```
-
-You can also download and install from the latest commit on master, by running the following command:
-
-```
 cargo install --git https://github.com/LimeEng/drosera
 ```
 
-If you do not have cargo installed it is also possible to download a pre-built binary for either Windows, Linux or macOS from the [releases-page](https://github.com/LimeEng/drosera/releases).
-
 ## Usage
 
-Simply run ./drosera --help to obtain the following output:
-```
-drosera 0.3.2
+To view the available options and usage details, execute the `drosera` binary. Below is an example of the output:
+
+```sh
 Tarpit SSH server
 
-USAGE:
-    drosera.exe [OPTIONS]
+Usage: drosera [OPTIONS]
 
-OPTIONS:
-    -d <delay>                  Approximately wait this long before sending more data (in
-                                milliseconds) [default: 10000]
-    -h, --help                  Print help information
-    -m <max_connections>        The maximum number of connections maintained at once [default: 1024]
-    -s <socket_addr>            The socket address to bind to [default: 127.0.0.1:22]
-    -V, --version               Print version information
+Options:
+  -s, --socket_addr <socket_addr>
+          The socket address to bind to [default: 127.0.0.1:22]
+  -m, --max_connections <max_connections>
+          The maximum number of connections maintained at once [default: 1024]
+  -d, --delay <delay>
+          Approximately wait this long before sending more data (in milliseconds) [default: 10000]
+  -h, --help
+          Print help
+  -V, --version
+          Print version
 ```
 
 ## Risks

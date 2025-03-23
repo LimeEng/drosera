@@ -1,11 +1,11 @@
-use rand::{distributions::Alphanumeric, thread_rng, Rng};
+use rand::{Rng, distr::Alphanumeric};
 use std::{
     error::Error,
     io,
     net::SocketAddr,
     sync::{
-        atomic::{AtomicU32, Ordering},
         Arc,
+        atomic::{AtomicU32, Ordering},
     },
     time::{Duration, Instant},
 };
@@ -49,16 +49,11 @@ pub async fn start_server(options: TarpitServerOptions) -> Result<(), Box<dyn Er
 
 async fn process(socket: TcpStream, delay: u32) -> io::Result<()> {
     let peer = socket.peer_addr()?;
-    println!("{:?} connected", peer);
+    println!("{peer:?} connected");
     let connected = Instant::now();
     let sent_bytes = keep_busy(socket, delay).await;
-    let elapsed = connected.elapsed();
-    println!(
-        "{:?} disconnected, was connected for {}ms, received {} bytes",
-        peer,
-        elapsed.as_millis(),
-        sent_bytes
-    );
+    let elapsed = connected.elapsed().as_millis();
+    println!("{peer:?} disconnected, was connected for {elapsed}ms, received {sent_bytes} bytes");
     Ok(())
 }
 
@@ -73,13 +68,13 @@ async fn keep_busy(mut socket: TcpStream, delay: u32) -> u64 {
             return sent_bytes;
         }
         let range = (f64::from(delay) * 0.7) as u64..(f64::from(delay) * 1.3) as u64;
-        let time = thread_rng().gen_range(range);
+        let time = rand::rng().random_range(range);
         sleep(Duration::from_millis(time)).await;
     }
 }
 
 fn rand_string(length: usize) -> String {
-    thread_rng()
+    rand::rng()
         .sample_iter(&Alphanumeric)
         .map(char::from)
         .take(length)

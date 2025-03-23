@@ -39,7 +39,7 @@ fn main() {
         max_connections: *matches.get_one::<u32>("max_connections").unwrap(),
         delay: *matches.get_one::<u32>("delay").unwrap(),
     };
-    println!("{:#?}", options);
+    println!("{options:#?}");
     start_server(options);
 }
 

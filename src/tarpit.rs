@@ -49,16 +49,11 @@ pub async fn start_server(options: TarpitServerOptions) -> Result<(), Box<dyn Er
 
 async fn process(socket: TcpStream, delay: u32) -> io::Result<()> {
     let peer = socket.peer_addr()?;
-    println!("{:?} connected", peer);
+    println!("{peer:?} connected");
     let connected = Instant::now();
     let sent_bytes = keep_busy(socket, delay).await;
-    let elapsed = connected.elapsed();
-    println!(
-        "{:?} disconnected, was connected for {}ms, received {} bytes",
-        peer,
-        elapsed.as_millis(),
-        sent_bytes
-    );
+    let elapsed = connected.elapsed().as_millis();
+    println!("{peer:?} disconnected, was connected for {elapsed}ms, received {sent_bytes} bytes");
     Ok(())
 }
 

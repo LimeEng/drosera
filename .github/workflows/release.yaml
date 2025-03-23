@@ -52,3 +52,5 @@ jobs:
         echo "Uploading ${ARTIFACT_PATH}..."
 
         gh release upload ${CRATE_VERSION} ${ARTIFACT_PATH}#${DISPLAY_NAME}
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

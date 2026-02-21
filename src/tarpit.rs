@@ -1,4 +1,4 @@
-use rand::{Rng, distr::Alphanumeric};
+use rand::{RngExt, distr::Alphanumeric};
 use std::{
     error::Error,
     io,
@@ -67,6 +67,7 @@ async fn keep_busy(mut socket: TcpStream, delay: u32) -> u64 {
         } else {
             return sent_bytes;
         }
+        #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
         let range = (f64::from(delay) * 0.7) as u64..(f64::from(delay) * 1.3) as u64;
         let time = rand::rng().random_range(range);
         sleep(Duration::from_millis(time)).await;

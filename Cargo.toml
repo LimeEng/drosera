@@ -1,7 +1,6 @@
 [package]
 name = "drosera"
-version = "0.3.3"
-authors = ["Emil Englesson <englesson.emil@gmail.com>"]
+version = "0.4.0"
 edition = "2024"
 description = "SSH tarpit server"
 repository = "https://github.com/LimeEng/drosera/"
@@ -9,12 +8,10 @@ license = "MIT"
 keywords = ["tarpit", "server", "ssh"]
 categories = ["command-line-utilities"]
 
-exclude = [
-    ".github/**"
-]
+exclude = [".github/**"]
 
 [dependencies]
 clap = { version = "4.5", features = ["cargo"] }
 futures = "0.3"
-rand = "0.9"
+rand = "0.10"
 tokio = { version = "1.0", features = ["full"] }

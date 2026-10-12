@@ -1,5 +1,4 @@
 [![CI status](https://github.com/LimeEng/drosera/actions/workflows/ci.yaml/badge.svg)](https://github.com/LimeEng/drosera/actions/workflows/ci.yaml)
-[![Latest version](https://img.shields.io/crates/v/drosera?color=blue)](https://crates.io/crates/drosera)
 
 # Drosera
 
@@ -20,4 +19,4 @@ Drosera, like its [beautiful namesake](https://en.wikipedia.org/wiki/Drosera), i
 
 ## Installation
 
-Install drosera from [crates.io](https://crates.io/crates/drosera) with `cargo install drosera` or by grabbing a [pre-built binary](https://github.com/LimeEng/drosera/releases).
+Install drosera by grabbing a [pre-built binary](https://github.com/LimeEng/drosera/releases) or by running `cargo install --git https://github.com/LimeEng/drosera`.

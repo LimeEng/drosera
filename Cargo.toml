@@ -1,6 +1,6 @@
 [package]
 name = "drosera"
-version = "0.4.0"
+version = "0.4.1"
 edition = "2024"
 description = "SSH tarpit server"
 repository = "https://github.com/LimeEng/drosera/"
